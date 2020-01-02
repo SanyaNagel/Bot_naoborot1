@@ -52,7 +52,7 @@ namespace Bot_naoborot
 
         ///Получение текущей цены
         public double getPrice()
-        {///
+        {
             try
             {
                 if (currentPrice == null)
