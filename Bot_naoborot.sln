@@ -5,6 +5,12 @@ VisualStudioVersion = 16.0.29519.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bot_naoborot", "Bot_naoborot\Bot_naoborot.csproj", "{E7F7D113-971B-43F2-B006-9E6AD9BDD4A6}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F719BE3A-8016-4BBB-9161-8487AF3A7D85}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		Reminder.txt = Reminder.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -4,10 +4,12 @@ using OpenQA.Selenium;
 using System.Speech.Synthesis;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
+using System.Media;
+
 namespace Bot_naoborot
 {
     ///
@@ -18,14 +20,26 @@ namespace Bot_naoborot
     {
         IWebDriver Browser;
         IWebElement currentPrice = null;    //Указатель на текущую цену
-        IWebElement btnCall = null;         //Указатель на кнопку повышение
-        IWebElement btnPut = null;          //Указатель на кнопку понижения
         Form1 form;
 
+        public SoundPlayer sp;
+        public SoundPlayer egp;
+        public bool call = true;
+        public bool put = true;
+        public static Mutex mutexObj = new Mutex();
         public Helper(Form1 f, IWebDriver brow)
         {
             form = f;
             Browser = brow;
+            
+            sp = new SoundPlayer();
+            sp.SoundLocation = "alert.wav";
+            sp.LoadAsync();
+
+            egp = new SoundPlayer();
+            egp.SoundLocation = "disconnect.wav";
+            egp.LoadAsync();
+
         }
 
         /// <summary>
@@ -34,6 +48,7 @@ namespace Bot_naoborot
         /// </summary>
         public void update()
         {
+            mutexObj.WaitOne();
             //Указатель текущей цены
             try
             {
@@ -41,13 +56,7 @@ namespace Bot_naoborot
                 currentPrice = listele.Last();
             }
             catch (Exception er) { }
-
-            //Указатель на кнопку понижения
-            try { btnPut = Browser.FindElement(By.CssSelector(".btn.btn-put")); } catch (Exception ex2) { }
-
-            //Указатель на кнопку понижения 
-            try { btnCall = Browser.FindElement(By.CssSelector(".btn.btn-call")); } catch (Exception ex2) { }
-        
+            mutexObj.ReleaseMutex();
         }
 
         ///Получение текущей цены
@@ -63,7 +72,7 @@ namespace Bot_naoborot
                 return Convert.ToDouble(currentPrice.Text.Replace(".",","));
             }
             catch (Exception er) 
-            {  
+            {
                 //Вторая попытка получить цену (для получения цены в первый раз)
                 try
                 {
@@ -73,7 +82,13 @@ namespace Bot_naoborot
                 }
                 catch (Exception ex)
                 {
-                    form.setConsoleText("Цена не найдена");
+                    form.BeginInvoke(new MethodInvoker(delegate
+                    { 
+                        form.setConsoleText("Цена не найдена");             
+                    }));
+                    
+                    egp.Play(); //Звук ошибки
+
                     currentPrice = null;
                     return -1;
                 }
@@ -83,49 +98,39 @@ namespace Bot_naoborot
         ///Нажатие на кнопку повышения
         public void clickBattonCall()
         {
+            mutexObj.WaitOne();
+            if (call == false)  //Проверка на разрешимость ставить на повышение
+                return;
+
             try
             {
-                btnCall.Click();
+                IJavaScriptExecutor jse = Browser as IJavaScriptExecutor;
+                jse.ExecuteScript("document.querySelector('.btn.btn-call').click();");
             }
-            catch (Exception ex) 
-            {
-                //Вторая попытка нажатия клавиши (для первого нажатия на кнопку)
-                try
-                {
-                    btnCall = Browser.FindElement(By.CssSelector(".btn.btn-call"));
-                    btnCall.Click();
-                }
-                catch(Exception ex2)
-                {
-                    form.setConsoleText("Ошибка нажатия кнопки на повышение");
-                    btnCall = null;
-                }           
-            }
+            catch (Exception ex) { }           
+            
+            sp.Play();  //Звук сделанной ставки
+            
+            mutexObj.ReleaseMutex();
         }
 
         ///Нажатие на кнопку понижения
         public void clickBattonPut()
         {
+            mutexObj.WaitOne();
+            if (put == false)    //Проверка на разрешимость ставить на понижение
+                return;
+
             try
             {
-                btnPut.Click();
+                IJavaScriptExecutor jse = Browser as IJavaScriptExecutor;
+                jse.ExecuteScript("document.querySelector('.btn.btn-put').click();");
             }
-            catch (Exception ex) 
-            {
-                //Вторая попытка нажатия клавиши (для первого нажатия на кнопку)
-                try
-                {
-                    btnPut = Browser.FindElement(By.CssSelector(".btn.btn-put"));
-                    btnPut.Click();
-                }
-                catch (Exception ex2)
-                {
-                    form.setConsoleText("Ошибка нажатия кнопки на понижение");
-                    btnCall = null;
-                }
-            }
+            catch (Exception ex) { }
+
+            sp.Play();  //Звук сделанной ставки
+            
+            mutexObj.ReleaseMutex();
         }
-
-
     }
 }

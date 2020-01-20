@@ -1,0 +1,64 @@
+ ///Выключение звука
+        // private void button2_Click(object sender, EventArgs e)
+        //{
+        //PlaySound(null, 0,0);
+        //soundT.Abort();
+        //}
+
+
+        void playSound()
+        {
+            PlaySound("prekol.wav", 1, 1);
+        }
+
+
+        void getData()
+        {
+            SpeechSynthesizer synth = new SpeechSynthesizer();
+            synth.SetOutputToDefaultAudioDevice();
+            var voices = synth.GetInstalledVoices(new CultureInfo("ru-RU"));
+            synth.SelectVoice(voices[0].VoiceInfo.Name);
+
+            String strInterest = "";    //Переменная для прошлого результата    
+            String bufIntrest = "";
+            while (true)
+            {
+                try
+                {
+                    IWebElement interest = Browser.FindElement(By.ClassName("deal-buttons__text"));
+                    //IWebElement strike = Browser.FindElement(By.ClassName("strike-button-console"));
+
+                    bufIntrest = interest.Text;
+                }
+                catch (Exception e)
+                {
+                    continue;
+                }
+
+                if ((strInterest == "80%" || strInterest == "82%") && bufIntrest != strInterest && (bufIntrest != "80%" && bufIntrest != "82%"))
+                {
+                    //soundT = new Thread(playSound);
+                    //soundT.Start();
+
+                    try
+                    {
+                        PlaySound("prekol.wav", 1, 1);
+                    }
+                    catch (Exception e) { continue; }
+                    strInterest = bufIntrest;
+                }
+                else if (strInterest != bufIntrest)
+                {
+                    strInterest = bufIntrest;
+                    synth.Speak(strInterest);
+                }
+
+                /*BeginInvoke(new MethodInvoker(delegate
+                {
+                    lableInterest.Text = strInterest; //Выводим проценты
+                    lableStrike.Text = strike.Text;     //Выводим страйк цену
+                }));
+
+                // System.Threading.Thread.Sleep(100);   //Задержка что бы не подвисал основной поток
+            }}
+        
