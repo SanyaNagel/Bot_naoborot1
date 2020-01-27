@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics;
 
 namespace Bot_naoborot
 {
@@ -44,6 +45,11 @@ namespace Bot_naoborot
 
             //Перешли на сайт
             Form1.Browser = new OpenQA.Selenium.Chrome.ChromeDriver();
+            
+            //Удаление файла с котировками из мосбиржи
+            System.Diagnostics.Process.Start("delFile.bat");
+
+            Form1.Browser.Navigate().GoToUrl("http://export.finam.ru/POLY_170620_170623.txt?market=1&em=175924&code=POLY&apply=0&df=20&mf=5&yf=2017&from=20.06.2017&dt=23&mt=5&yt=2017&to=23.06.2017&p=8&f=POLY_170620_170623&e=.txt&cn=POLY&dtf=1&tmf=1&MSOR=1&mstime=on&mstimever=1&sep=1&sep2=1&datf=1&at=1");
             Form1.Browser.Navigate().GoToUrl("https://pocketoption.com/ru/login");
 
             //Ввод мейла
@@ -83,6 +89,22 @@ namespace Bot_naoborot
                 reg.Click();
             }catch(Exception eee) { }*/
             this.Close();
+        }
+
+        static bool fSettings = false;
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            if (fSettings == false)
+            {
+                this.Height = 256;
+                fSettings = true;
+            }
+            else
+            {
+                this.Height = 204;
+                fSettings = false;
+            }
         }
     }
 }

@@ -58,8 +58,16 @@ namespace Bot_naoborot
             mutexObj1.ReleaseMutex();
         }
 
+        public void loadCloseCandle()
+        {
+
+        }
+
         public void start()
         {
+            //Загрузка последних 9 закрытых свечей с московской биржи
+            loadCloseCandle();
+
             while (true)
             {
                 if (closePrices.Count() < 1)
