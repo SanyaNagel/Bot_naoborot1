@@ -26,6 +26,7 @@ namespace Bot_naoborot
             StreamReader sr = new StreamReader("user.dat");
             email.Text = sr.ReadLine();
             Password.Text = sr.ReadLine();
+            PathDownlods.Text = sr.ReadLine();
             sr.Close();
         }
 
@@ -35,6 +36,7 @@ namespace Bot_naoborot
             StreamWriter sw = File.CreateText("user.dat");
             sw.WriteLine(email.Text);
             sw.WriteLine(Password.Text);
+            sw.WriteLine(PathDownlods.Text);
             sw.Close();
         }
 
@@ -43,13 +45,21 @@ namespace Bot_naoborot
             //Сохраним введённые логин и пароль, чтобы они появились при следубщем запуске
             saveParamets();
 
-            //Перешли на сайт
-            Form1.Browser = new OpenQA.Selenium.Chrome.ChromeDriver();
-            
-            //Удаление файла с котировками из мосбиржи
+            //Создаём BAT файл для удаления старых котировок
+            StreamWriter sw = File.CreateText("delFile.bat");
+            sw.WriteLine("DEL /F /S /Q /A \"" + PathDownlods.Text+ "\"" );
+            sw.Close();
+
+            //Удаление файла с котировками из мосбиржи с помощью созданного BAT файла
             System.Diagnostics.Process.Start("delFile.bat");
 
+            //Открываем браузер 
+            Form1.Browser = new OpenQA.Selenium.Chrome.ChromeDriver();
+            
+            //Скачиваем файл с котировками из мосбиржи
             Form1.Browser.Navigate().GoToUrl("http://export.finam.ru/POLY_170620_170623.txt?market=1&em=175924&code=POLY&apply=0&df=20&mf=5&yf=2017&from=20.06.2017&dt=23&mt=5&yt=2017&to=23.06.2017&p=8&f=POLY_170620_170623&e=.txt&cn=POLY&dtf=1&tmf=1&MSOR=1&mstime=on&mstimever=1&sep=1&sep2=1&datf=1&at=1");
+            
+            //Переходим на покет
             Form1.Browser.Navigate().GoToUrl("https://pocketoption.com/ru/login");
 
             //Ввод мейла
