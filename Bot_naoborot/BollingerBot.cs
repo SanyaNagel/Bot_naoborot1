@@ -44,14 +44,17 @@ namespace Bot_naoborot
             System.Diagnostics.Process.Start("delFile.bat");
 
             //Скачиваем файл с котировками из мосбиржи
-            help.getFileCotir(help.getCurrency());
+            string currency_ = help.getCurrency();
+            help.getFileCotir(currency_);
+            if (currency_ == "NZDCHF")
+                return;
 
+            System.Threading.Thread.Sleep(3000);
 
-            //Теперь надо из этого файла добавить 9 последних цен
-            
+            //Извлекаем 9 последних закрытий из полученного файла
             //Получаем размер файла
             int sizeFile = getNumberString(nameFile);
-            StreamReader sr = new StreamReader(@nameFile);
+            StreamReader sr = new StreamReader(nameFile);
             while(sizeFile-- > 10)
                 sr.ReadLine();
             
@@ -59,7 +62,7 @@ namespace Bot_naoborot
             while((line = sr.ReadLine()) != null)
             {
                 string[] word = line.Split(' ');
-                addClosePrice(Convert.ToDouble(word[4]));
+                addClosePrice(Convert.ToDouble(word[4].Replace(".", ",")));
             }
             sr.Close();
 
@@ -141,6 +144,8 @@ namespace Bot_naoborot
                     currCurrency = newCurCurrency;  //И новая валюта становится текущей
                 }
 
+                if (currCurrency == "NZDCHF")
+                    continue;
 
                 double curPrice = help.getPrice();
 

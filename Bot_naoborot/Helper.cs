@@ -27,6 +27,7 @@ namespace Bot_naoborot
         public bool call = true;
         public bool put = true;
         public static Mutex mutexObj = new Mutex();
+        public SpeechSynthesizer synth;
         public Helper(Form1 f, IWebDriver brow)
         {
             form = f;
@@ -39,6 +40,11 @@ namespace Bot_naoborot
             egp = new SoundPlayer();
             egp.SoundLocation = "disconnect.wav";
             egp.LoadAsync();
+
+            synth = new SpeechSynthesizer();
+            synth.SetOutputToDefaultAudioDevice();
+            var voices = synth.GetInstalledVoices(new CultureInfo("ru-RU"));
+            synth.SelectVoice(voices[0].VoiceInfo.Name);
 
         }
 
@@ -64,7 +70,11 @@ namespace Bot_naoborot
         {
             try
             {
-                return Browser.FindElement(By.ClassName("current-symbol")).Text.Remove(3,1);
+                string cotir = Browser.FindElement(By.ClassName("current-symbol")).Text;
+                if (cotir.Length > 7)   //Случай когда после цены ещё пишут ОТС
+                    return cotir.Remove(3, 1).Remove(6);
+                else
+                    return cotir.Remove(3, 1);
             }
             catch (Exception ex)
             {
@@ -86,6 +96,12 @@ namespace Bot_naoborot
                 if (word[0] == curCotir)
                 {
                     sr.Close();
+
+                    if (word[1] == "------") //Если это NZDCHF то мы её не можем получить из мосбиржи
+                    {
+                        synth.Speak("Ошибка, не могу получить валюту NZD CHF");
+                        return null;
+                    }
                     return word[1];
                 }
             }
@@ -109,6 +125,10 @@ namespace Bot_naoborot
             DateTime curDate = DateTime.Now;                //Текущая дата
             DateTime prevDate = DateTime.Now.AddDays(-1);   //День назад
             string em = get_EM_CurCotir(currCotir);
+
+            //В случае если попалась валюта NZDCHF которой нет на мосбирже
+            if (em == null)
+                return;
 
             Form1.Browser.Navigate().GoToUrl(
                 "http://export.finam.ru/" + getNameFile(currCotir) +"?market=5" + "&em=" + em + "&code=" + currCotir + "&apply=0&df=" + prevDate.Day.ToString() +
