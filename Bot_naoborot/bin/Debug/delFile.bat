@@ -1,1 +1,1 @@
-DEL /F /S /Q /A "C:\Users\dazen\Downloads\POLY_170620_170623.txt"
+DEL /F /S /Q /A "C:\Users\dazen\Downloads\EURUSD_2020129_2020130.txt"
