@@ -99,34 +99,41 @@ namespace Bot_naoborot
             }
         }
 
+        public void addCurPrice(double price)
+        {
+            closePrices.RemoveAt(8);
+            closePrices.Add(price);
+        }
+
+        ///Каждую секунду вызывается метод болинжера
         public void tickTimerBB()
         {
-            if (++counter == 60)
+            if (++counter == 60)    //Каждую минуту
             {
                 mutexObj1.WaitOne();
-                addClosePrice(help.getPrice());
+                addClosePrice(help.getPrice()); //Добавляем в конец очереди 
                 mutexObj1.ReleaseMutex();
                 counter = 0;
 
             }
+            else    //Если минута не прошла, то для плавающего болинжера меняем последнюю цену 
+            {
+                mutexObj1.WaitOne();
+                addCurPrice(help.getPrice());   //Добавление текущей цены для плавоющего болинжера
+                mutexObj1.ReleaseMutex();
+            }
 
             mutexObj1.WaitOne();
-            if (stopLimit > 0)
+            if (stopLimit > 0)  //Параметр определяющий интервал подряд идущих ставок
             {
                 --stopLimit;
             }
             mutexObj1.ReleaseMutex();
         }
 
-        public void loadCloseCandle()
-        {
-
-        }
-
+        ///Главная функция бота
         public void start()
         {
-            //Загрузка последних 9 закрытых свечей с московской биржи
-            loadCloseCandle();
 
             while (true)
             {
@@ -147,7 +154,7 @@ namespace Bot_naoborot
                 if (currCurrency == "NZDCHF")
                     continue;
 
-                double curPrice = help.getPrice();
+                double curPrice = help.getPrice();  //Получаем текущую цену
 
                 if (curPrice > BollingerBands.TLCalc(closePrices, 2) + depart)
                 {
