@@ -175,8 +175,6 @@ namespace Bot_naoborot
                 }
                 
             }
-        }
-
-
+        } 
     }
 }
