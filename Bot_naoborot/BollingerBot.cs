@@ -168,8 +168,6 @@ namespace Bot_naoborot
                 }
                 
             }
-        }
-
-
+        } 
     }
 }

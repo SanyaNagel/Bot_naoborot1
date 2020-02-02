@@ -9,3 +9,15 @@ C:\Users\dazen\source\repos\Bot_naoborot\Bot_naoborot\obj\Debug\Bot_naoborot.csp
 C:\Users\dazen\source\repos\Bot_naoborot\Bot_naoborot\obj\Debug\Bot_naoborot.exe
 C:\Users\dazen\source\repos\Bot_naoborot\Bot_naoborot\obj\Debug\Bot_naoborot.pdb
 C:\Users\dazen\source\repos\Bot_naoborot\Bot_naoborot\obj\Debug\Bot_naoborot.Authorization.resources
+C:\Users\cooln\Source\Repos\Bot_naoborot1\Bot_naoborot\bin\Debug\Bot_naoborot.exe.config
+C:\Users\cooln\Source\Repos\Bot_naoborot1\Bot_naoborot\bin\Debug\Bot_naoborot.exe
+C:\Users\cooln\Source\Repos\Bot_naoborot1\Bot_naoborot\bin\Debug\Bot_naoborot.pdb
+C:\Users\cooln\Source\Repos\Bot_naoborot1\Bot_naoborot\obj\Debug\Bot_naoborot.csprojAssemblyReference.cache
+C:\Users\cooln\Source\Repos\Bot_naoborot1\Bot_naoborot\obj\Debug\Bot_naoborot.Authorization.resources
+C:\Users\cooln\Source\Repos\Bot_naoborot1\Bot_naoborot\obj\Debug\Bot_naoborot.Form1.resources
+C:\Users\cooln\Source\Repos\Bot_naoborot1\Bot_naoborot\obj\Debug\Bot_naoborot.Properties.Resources.resources
+C:\Users\cooln\Source\Repos\Bot_naoborot1\Bot_naoborot\obj\Debug\Bot_naoborot.csproj.GenerateResource.cache
+C:\Users\cooln\Source\Repos\Bot_naoborot1\Bot_naoborot\obj\Debug\Bot_naoborot.csproj.CoreCompileInputs.cache
+C:\Users\cooln\Source\Repos\Bot_naoborot1\Bot_naoborot\obj\Debug\Bot_naoborot.csproj.CopyComplete
+C:\Users\cooln\Source\Repos\Bot_naoborot1\Bot_naoborot\obj\Debug\Bot_naoborot.exe
+C:\Users\cooln\Source\Repos\Bot_naoborot1\Bot_naoborot\obj\Debug\Bot_naoborot.pdb
