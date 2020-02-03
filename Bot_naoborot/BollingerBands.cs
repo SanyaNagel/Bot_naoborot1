@@ -58,16 +58,14 @@ namespace Bot_naoborot
         // входные параметры: 
         // 1) параметр плоской линии flat - если модуль коэффициента наклона полосы меньше flat, то считаем его = 0
         // 2) список предыдущих n цен закрытия
-        // 3) текущая цена закрытия
         // 4) кол-во стандартных отклонений для линий болинджера
         // 5) время с момента закрытия последней свечи в секундах
         // результат: массив значений double: delta, верхнее направление, нижнее направление
-        public static double [] GBAP(double flat, List<double> CloseP, double currentP, int D, int timeAfterClosing) // GBA = get bollinger analysis parameters
+        public static double [] GBAP(double flat, List<double> CloseP, int D, int timeAfterClosing) // GBA = get bollinger analysis parameters
         {
-            CloseP.Add(currentP); // добавить текущую цену в список цен
             double delta = TLCalc(CloseP, D) - BLCalc(CloseP, D); // получить разность верхней и нижней полосы
-            double tk = currentP - CloseP[CloseP.Count - 1] / (Convert.ToDouble(timeAfterClosing + 1) / 60); // получить коэффициент наклона верхней прямой
-            double bk = CloseP[CloseP.Count - 1] - currentP / (Convert.ToDouble(timeAfterClosing + 1) / 60); // получить коэффициент наклона нижней прямой
+            double tk = CloseP.Last<double>() - CloseP[CloseP.Count - 1] / (Convert.ToDouble(timeAfterClosing + 1) / 60); // получить коэффициент наклона верхней прямой
+            double bk = CloseP[CloseP.Count - 1] - CloseP.Last<double>() / (Convert.ToDouble(timeAfterClosing + 1) / 60); // получить коэффициент наклона нижней прямой
             // если незначительные отклонения, то принять их за 0
             if (Math.Abs(tk) < flat)
                 tk = 0;
@@ -81,7 +79,7 @@ namespace Bot_naoborot
         // 1) массив значений double: delta, верхнее направление, нижнее направление
         // 2) значение максимально допустимого расширения коридора
         // результат: команда боту nothing <=> не ставить, all <=> можно ставить в любом направлении, up <=> ставить только вверх, down <=> ставить только вниз
-        public static string DBA(double [] parameters, double prevDelta, double maxDelta) // do bollinger analyze
+        public static string DBA(double [] parameters, double maxDelta) // do bollinger analyze
         {
             // проинциализзируем параметры явно
             double delta = parameters[0];

@@ -24,10 +24,13 @@ namespace Bot_naoborot
 
         public SoundPlayer sp;
         public SoundPlayer egp;
-        public bool call = true;
-        public bool put = true;
         public static Mutex mutexObj = new Mutex();
         public SpeechSynthesizer synth;
+
+        public bool call = true;        //Пользовательское разрешение ставок (На повышение)
+        public bool put = true;         //Пользовательское разрешение ставок (На понижение)
+        public bool callСlaw = true;    //Зависимость от логики клешень боллинжера (На повышение)
+        public bool putСlaw = true;     //Зависимость от логики клешень боллинжера (На понижение)
         public Helper(Form1 f, IWebDriver brow)
         {
             form = f;
@@ -45,7 +48,6 @@ namespace Bot_naoborot
             synth.SetOutputToDefaultAudioDevice();
             var voices = synth.GetInstalledVoices(new CultureInfo("ru-RU"));
             synth.SelectVoice(voices[0].VoiceInfo.Name);
-
         }
 
         /// <summary>
@@ -132,8 +134,8 @@ namespace Bot_naoborot
 
             Form1.Browser.Navigate().GoToUrl(
                 "http://export.finam.ru/" + getNameFile(currCotir) +"?market=5" + "&em=" + em + "&code=" + currCotir + "&apply=0&df=" + prevDate.Day.ToString() +
-                    "&mf=0&yf=" + curDate.Year.ToString() + "&from=" + prevDate.Day.ToString() + "." + prevDate.Month.ToString() + "." + prevDate.Year.ToString() + 
-                    "&dt=" + curDate.Day.ToString() + "&mt=0&yt=" + curDate.Year.ToString() + "&to=" + curDate.Day.ToString() + "." + curDate.Month.ToString() + 
+                    "&mf=1&yf=" + curDate.Year.ToString() + "&from=" + prevDate.Day.ToString() + "." + prevDate.Month.ToString() + "." + prevDate.Year.ToString() + 
+                    "&dt=" + curDate.Day.ToString() + "&mt=1&yt=" + curDate.Year.ToString() + "&to=" + curDate.Day.ToString() + "." + curDate.Month.ToString() + 
                     "." + curDate.Year.ToString() + "&p=2&f=" + currCotir + "_" + prevDate.Year.ToString() + prevDate.Month.ToString() + prevDate.Day.ToString() + 
                     "_" + curDate.Year.ToString() + curDate.Month.ToString() + curDate.Day.ToString() + "&e=.txt&cn=" + 
                     currCotir + "&dtf=1&tmf=1&MSOR=1&mstimever=0&sep=5&sep2=1&datf=4"
@@ -191,7 +193,7 @@ namespace Bot_naoborot
         public void clickBattonCall()
         {
             mutexObj.WaitOne();
-            if (call == false)  //Проверка на разрешимость ставить на повышение
+            if (call == false || callСlaw == false)  //Проверка на разрешимость ставить на повышение
                 return;
 
             try
@@ -210,7 +212,7 @@ namespace Bot_naoborot
         public void clickBattonPut()
         {
             mutexObj.WaitOne();
-            if (put == false)    //Проверка на разрешимость ставить на понижение
+            if (put == false || putСlaw == false)    //Проверка на разрешимость ставить на понижение
                 return;
 
             try
@@ -223,6 +225,16 @@ namespace Bot_naoborot
             sp.Play();  //Звук сделанной ставки
             
             mutexObj.ReleaseMutex();
+        }
+
+        //Установка разрешимости ставок по боллинжеровским клешням
+        public void setCallСlaw(bool value)
+        {
+            callСlaw = value;
+        }
+        public void setPutClaw(bool value)
+        {
+            putСlaw = value;
         }
     }
 }

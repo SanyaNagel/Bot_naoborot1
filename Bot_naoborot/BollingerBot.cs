@@ -99,6 +99,7 @@ namespace Bot_naoborot
             }
         }
 
+        //Добавление текущей цены каждую секунду для плавющего боллинжера
         public void addCurPrice(double price)
         {
             closePrices.RemoveAt(8);
@@ -108,21 +109,21 @@ namespace Bot_naoborot
         ///Каждую секунду вызывается метод болинжера
         public void tickTimerBB()
         {
+            mutexObj1.WaitOne();
             if (++counter == 60)    //Каждую минуту
             {
-                mutexObj1.WaitOne();
                 addClosePrice(help.getPrice()); //Добавляем в конец очереди 
-                mutexObj1.ReleaseMutex();
                 counter = 0;
 
             }
             else    //Если минута не прошла, то для плавающего болинжера меняем последнюю цену 
             {
-                mutexObj1.WaitOne();
+                //mutexObj1.WaitOne();
                 addCurPrice(help.getPrice());   //Добавление текущей цены для плавоющего болинжера
-                mutexObj1.ReleaseMutex();
+                //mutexObj1.ReleaseMutex();
             }
-
+            mutexObj1.ReleaseMutex();
+           
             mutexObj1.WaitOne();
             if (stopLimit > 0)  //Параметр определяющий интервал подряд идущих ставок
             {
@@ -154,6 +155,9 @@ namespace Bot_naoborot
                 if (currCurrency == "NZDCHF")
                     continue;
 
+
+                logikClaw(BollingerBands.DBA(BollingerBands.GBAP(0.5, closePrices, 2, counter), 0.3));
+
                 double curPrice = help.getPrice();  //Получаем текущую цену
 
                 if (curPrice > BollingerBands.TLCalc(closePrices, 2) + depart)
@@ -175,6 +179,30 @@ namespace Bot_naoborot
                 }
                 
             }
-        } 
+        }
+
+        //Функция устанавливающая разрешения на ставки, в зависимсоти от клешень
+        public void logikClaw(string resultGBAP)
+        {
+            //Ставить можно в обе стороны
+            if (resultGBAP == "all")
+            {
+                help.setCallСlaw(true);
+                help.setPutClaw(true);
+            }
+
+            //Ставить только вверх
+            if(resultGBAP == "up")
+            {
+                help.setCallСlaw(true);
+                help.setPutClaw(false);
+            }
+
+            if (resultGBAP == "down")
+            {
+                help.setCallСlaw(false);
+                help.setPutClaw(true);
+            }
+        }
     }
 }
